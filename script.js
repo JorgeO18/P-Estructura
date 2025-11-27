@@ -986,6 +986,7 @@ function limpiarTodo() {
     actualizarEstadisticas();
     mostrarRecorridos();
     
+    
     // Limpiar mapa (rutas y números de orden)
     document.querySelectorAll('.ruta-activa').forEach(el => el.remove());
     document.querySelectorAll('.numero-orden').forEach(el => el.remove());
