@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Optimización de Rutas de Mensajería - CECAR</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🚚 Optimización de Rutas de Mensajería Institucional</h1>
+            <p class="subtitle">Algoritmo del Vecino Más Cercano (Greedy TSP)</p>
+        </header>
+
+        <div class="main-content">
+            <!-- Panel de Control -->
+            <div class="control-panel">
+                <h2>Panel de Control</h2>
+                
+                <div class="package-form">
+                    <h3>Agregar Paquete</h3>
+                    <div class="form-group">
+                        <label for="destino">Destino:</label>
+                        <select id="destino">
+                            <option value="BLOQUE B">BLOQUE B</option>
+                            <option value="BLOQUE C">BLOQUE C</option>
+                            <option value="BLOQUE D">BLOQUE D</option>
+                            <option value="BLOQUE E">BLOQUE E</option>
+                            <option value="BLOQUE F">BLOQUE F</option>
+                            <option value="BLOQUE G">BLOQUE G</option>
+                            <option value="RANCHOS">RANCHOS</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="prioridad">Prioridad:</label>
+                        <select id="prioridad">
+                            <option value="normal">Normal</option>
+                            <option value="urgente">Urgente</option>
+                        </select>
+                    </div>
+                    <button id="agregarPaquete" class="btn btn-primary">Agregar Paquete</button>
+                </div>
+
+                <div class="actions">
+                    <button id="simularEnvio" class="btn btn-success">Simular Envío del Día</button>
+                    <button id="limpiar" class="btn btn-secondary">Limpiar Todo</button>
+                </div>
+
+                <div class="paquetes-lista">
+                    <h3>Paquetes Pendientes</h3>
+                    <div id="listaPaquetes" class="lista-paquetes"></div>
+                </div>
+
+                <div class="estadisticas">
+                    <h3>Estadísticas</h3>
+                    <div id="estadisticas" class="stats-content"></div>
+                </div>
+            </div>
+
+            <!-- Mapa y Visualización -->
+            <div class="map-container">
+                <h2>Mapa del Campus</h2>
+                <div class="map-wrapper">
+                    <svg id="mapa" width="800" height="600" viewBox="0 0 800 600">
+                        <!-- Las conexiones y nodos se dibujarán aquí con JavaScript -->
+                    </svg>
+                </div>
+                <div class="map-legend">
+                    <div class="legend-item">
+                        <span class="legend-color legend-origen"></span>
+                        <span>Bloque A (Origen)</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-color legend-bloque"></span>
+                        <span>Otros Bloques</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-color legend-ruta"></span>
+                        <span>Ruta Actual</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-color legend-urgente"></span>
+                        <span>Urgente</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Panel de Recorridos -->
+        <div class="recorridos-panel">
+            <h2>Recorridos del Día</h2>
+            <div id="recorridosLista" class="recorridos-lista"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
