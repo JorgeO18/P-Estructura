@@ -1,8 +1,24 @@
-// Configuración
-const VELOCIDAD_MENSAJERO = 1.4; // m/s (aproximadamente 5 km/h caminando)
-const TIEMPO_ENTREGA_PAQUETE = 30; // segundos por paquete entregado
+/**
+ * ============================================
+ * CONFIGURACIÓN Y CONSTANTES
+ * ============================================
+ */
 
-// Estructura del grafo con las distancias entre bloques
+// Velocidad promedio del mensajero en metros por segundo (aproximadamente 5 km/h caminando)
+const VELOCIDAD_MENSAJERO = 1.4;
+
+// Tiempo promedio que tarda en entregar un paquete en segundos
+const TIEMPO_ENTREGA_PAQUETE = 30;
+
+/**
+ * ============================================
+ * ESTRUCTURA DE DATOS DEL GRAFO
+ * ============================================
+ * 
+ * Representa el mapa del campus como un grafo no dirigido.
+ * Cada bloque es un nodo y las conexiones entre bloques son aristas con distancias en metros.
+ * El grafo contiene todas las rutas posibles entre los diferentes bloques del campus.
+ */
 const grafo = {
     'BLOQUE A': {
         'BLOQUE B': 110.58,
@@ -50,7 +66,14 @@ const grafo = {
     }
 };
 
-// Posiciones de los nodos en el mapa (coordenadas para SVG) - Mejoradas para mejor visualización
+/**
+ * ============================================
+ * POSICIONES DE LOS NODOS EN EL MAPA SVG
+ * ============================================
+ * 
+ * Define las coordenadas (x, y) de cada bloque en el canvas SVG.
+ * Estas coordenadas determinan dónde se dibujarán visualmente los nodos en el mapa.
+ */
 const posiciones = {
     'BLOQUE A': { x: 400, y: 520 },
     'BLOQUE B': { x: 180, y: 480 },
@@ -62,12 +85,29 @@ const posiciones = {
     'RANCHOS': { x: 680, y: 480 }
 };
 
-// Estado de la aplicación
+/**
+ * ============================================
+ * ESTADO GLOBAL DE LA APLICACIÓN
+ * ============================================
+ */
+
+// Array que almacena todos los paquetes pendientes de envío
 let paquetes = [];
+
+// Array que almacena todos los recorridos realizados durante la simulación
 let recorridos = [];
+
+// Contador para asignar IDs únicos a cada paquete
 let idPaqueteCounter = 1;
 
-// Inicialización
+/**
+ * ============================================
+ * INICIALIZACIÓN DE LA APLICACIÓN
+ * ============================================
+ * 
+ * Se ejecuta cuando el DOM está completamente cargado.
+ * Inicializa el mapa, los event listeners y actualiza la interfaz.
+ */
 document.addEventListener('DOMContentLoaded', () => {
     dibujarMapa();
     inicializarEventos();
@@ -75,7 +115,18 @@ document.addEventListener('DOMContentLoaded', () => {
     actualizarEstadisticas();
 });
 
-// Dibujar el mapa del campus
+/**
+ * ============================================
+ * FUNCIÓN: dibujarMapa()
+ * ============================================
+ * 
+ * Dibuja el mapa completo del campus en el SVG.
+ * Incluye:
+ * - Gradientes para los nodos (verde para origen, azul para otros)
+ * - Líneas de conexión entre bloques con distancias
+ * - Nodos circulares con etiquetas
+ * - Efectos visuales (sombras, gradientes)
+ */
 function dibujarMapa() {
     const svg = document.getElementById('mapa');
     svg.innerHTML = '';
@@ -209,14 +260,27 @@ function dibujarMapa() {
     });
 }
 
-// Inicializar eventos
+/**
+ * ============================================
+ * FUNCIÓN: inicializarEventos()
+ * ============================================
+ * 
+ * Configura todos los event listeners de los botones y controles de la interfaz.
+ */
 function inicializarEventos() {
     document.getElementById('agregarPaquete').addEventListener('click', agregarPaquete);
     document.getElementById('simularEnvio').addEventListener('click', simularEnvio);
     document.getElementById('limpiar').addEventListener('click', limpiarTodo);
 }
 
-// Agregar un paquete
+/**
+ * ============================================
+ * FUNCIÓN: agregarPaquete()
+ * ============================================
+ * 
+ * Crea un nuevo paquete con los datos del formulario y lo agrega a la lista de paquetes pendientes.
+ * Actualiza la interfaz después de agregar el paquete.
+ */
 function agregarPaquete() {
     const destino = document.getElementById('destino').value;
     const prioridad = document.getElementById('prioridad').value;
@@ -233,7 +297,14 @@ function agregarPaquete() {
     actualizarEstadisticas();
 }
 
-// Actualizar lista de paquetes en el UI
+/**
+ * ============================================
+ * FUNCIÓN: actualizarListaPaquetes()
+ * ============================================
+ * 
+ * Actualiza visualmente la lista de paquetes pendientes en el panel de control.
+ * Muestra cada paquete con su destino, ID y prioridad.
+ */
 function actualizarListaPaquetes() {
     const lista = document.getElementById('listaPaquetes');
     lista.innerHTML = '';
@@ -260,7 +331,18 @@ function actualizarListaPaquetes() {
     });
 }
 
-// Actualizar estadísticas
+/**
+ * ============================================
+ * FUNCIÓN: actualizarEstadisticas()
+ * ============================================
+ * 
+ * Calcula y muestra las estadísticas actuales:
+ * - Total de paquetes
+ * - Cantidad de urgentes y normales
+ * - Destinos únicos
+ * - Recorridos realizados
+ * - Tiempo total estimado (si hay recorridos)
+ */
 function actualizarEstadisticas() {
     const stats = document.getElementById('estadisticas');
     const total = paquetes.length;
@@ -304,7 +386,24 @@ function actualizarEstadisticas() {
     }
 }
 
-// Calcular tiempo estimado del recorrido
+/**
+ * ============================================
+ * FUNCIÓN: calcularTiempoEstimado()
+ * ============================================
+ * 
+ * Calcula el tiempo estimado de un recorrido basándose en:
+ * - Distancia total a recorrer
+ * - Cantidad de paquetes a entregar
+ * 
+ * Retorna un objeto con:
+ * - total: tiempo total en segundos
+ * - desplazamiento: tiempo de caminata
+ * - entrega: tiempo de entrega de paquetes
+ * 
+ * @param {number} distancia - Distancia total en metros
+ * @param {number} cantidadPaquetes - Número de paquetes a entregar
+ * @returns {Object} Objeto con tiempos calculados
+ */
 function calcularTiempoEstimado(distancia, cantidadPaquetes) {
     // Tiempo de desplazamiento (distancia / velocidad)
     const tiempoDesplazamiento = distancia / VELOCIDAD_MENSAJERO;
@@ -322,7 +421,16 @@ function calcularTiempoEstimado(distancia, cantidadPaquetes) {
     };
 }
 
-// Formatear tiempo en formato legible
+/**
+ * ============================================
+ * FUNCIÓN: formatearTiempo()
+ * ============================================
+ * 
+ * Convierte segundos a un formato legible (horas, minutos, segundos).
+ * 
+ * @param {number} segundos - Tiempo en segundos
+ * @returns {string} Tiempo formateado (ej: "1h 5m 30s" o "3m 7s")
+ */
 function formatearTiempo(segundos) {
     const horas = Math.floor(segundos / 3600);
     const minutos = Math.floor((segundos % 3600) / 60);
@@ -337,7 +445,26 @@ function formatearTiempo(segundos) {
     }
 }
 
-// Algoritmo del Vecino Más Cercano (Greedy TSP)
+/**
+ * ============================================
+ * FUNCIÓN: vecinoMasCercano()
+ * ============================================
+ * 
+ * Implementa el algoritmo Greedy del Vecino Más Cercano para resolver el TSP (Traveling Salesman Problem).
+ * 
+ * Estrategia:
+ * 1. Comienza desde el origen
+ * 2. En cada paso, selecciona el destino no visitado más cercano
+ * 3. Repite hasta visitar todos los destinos
+ * 4. Regresa al origen
+ * 
+ * Este algoritmo es "greedy" porque toma la decisión localmente óptima en cada paso
+ * sin considerar el impacto global, lo que puede no dar la solución óptima pero es eficiente.
+ * 
+ * @param {string} origen - Nodo de inicio (siempre 'BLOQUE A')
+ * @param {Array<string>} destinos - Array de destinos a visitar
+ * @returns {Object} Objeto con la ruta optimizada y distancia total
+ */
 function vecinoMasCercano(origen, destinos) {
     if (destinos.length === 0) return { ruta: [origen], distancia: 0 };
     
@@ -385,7 +512,22 @@ function vecinoMasCercano(origen, destinos) {
     return { ruta, distancia: distanciaTotal };
 }
 
-// Obtener distancia entre dos nodos (usando BFS para encontrar el camino más corto)
+/**
+ * ============================================
+ * FUNCIÓN: obtenerDistancia()
+ * ============================================
+ * 
+ * Calcula la distancia más corta entre dos nodos del grafo.
+ * 
+ * Estrategia:
+ * 1. Si hay conexión directa, retorna esa distancia
+ * 2. Si no hay conexión directa, usa BFS (Breadth-First Search) para encontrar
+ *    el camino más corto pasando por otros nodos intermedios
+ * 
+ * @param {string} nodo1 - Primer nodo
+ * @param {string} nodo2 - Segundo nodo
+ * @returns {number} Distancia en metros (o Infinity si no hay camino)
+ */
 function obtenerDistancia(nodo1, nodo2) {
     if (nodo1 === nodo2) return 0;
     
@@ -421,7 +563,22 @@ function obtenerDistancia(nodo1, nodo2) {
     return Infinity;
 }
 
-// Simular envío del día
+/**
+ * ============================================
+ * FUNCIÓN: simularEnvio()
+ * ============================================
+ * 
+ * Función principal que simula el proceso de envío de todos los paquetes del día.
+ * 
+ * Proceso:
+ * 1. Separa paquetes por prioridad (urgentes y normales)
+ * 2. Para urgentes: crea un recorrido optimizado con el algoritmo greedy
+ * 3. Para normales: crea un recorrido optimizado con el algoritmo greedy
+ * 4. Anima cada recorrido en el mapa
+ * 5. Limpia los paquetes procesados y actualiza la interfaz
+ * 
+ * Es una función asíncrona porque las animaciones requieren esperar.
+ */
 async function simularEnvio() {
     if (paquetes.length === 0) {
         alert('No hay paquetes para enviar');
@@ -476,7 +633,25 @@ async function simularEnvio() {
     mostrarRecorridos();
 }
 
-// Animar el recorrido en el mapa
+/**
+ * ============================================
+ * FUNCIÓN: animarRecorrido()
+ * ============================================
+ * 
+ * Anima visualmente el recorrido en el mapa SVG.
+ * 
+ * Proceso de animación:
+ * 1. Dibuja la ruta completa con líneas punteadas
+ * 2. Marca cada punto de entrega con números secuenciales (1, 2, 3...)
+ * 3. Anima paso a paso el recorrido:
+ *    - Resalta el nodo actual en amarillo
+ *    - Dibuja la línea del trayecto con animación de opacidad
+ *    - Restaura el color del nodo
+ * 4. Al final, restaura el color del nodo final (origen)
+ * 
+ * @param {Array<string>} ruta - Array con la secuencia de nodos a visitar
+ * @param {string} tipo - Tipo de recorrido ('urgente' o 'normal')
+ */
 async function animarRecorrido(ruta, tipo) {
     const color = tipo === 'urgente' ? '#F44336' : '#FF9800';
     const svg = document.getElementById('mapa');
@@ -513,7 +688,13 @@ async function animarRecorrido(ruta, tipo) {
         }
     }
 
-    // Marcar puntos de entrega con números secuenciales
+    /**
+     * Marcar puntos de entrega con números secuenciales
+     * 
+     * Itera sobre los nodos de la ruta (excluyendo el origen inicial y final)
+     * y marca cada uno con un número que indica el orden de entrega.
+     * Ejemplo: Si la ruta es A → B → C → D → A, marca B con "1", C con "2", D con "3"
+     */
     let numeroEntrega = 1;
     for (let i = 1; i < ruta.length - 1; i++) {
         const nodo = ruta[i];
@@ -605,7 +786,24 @@ async function animarRecorrido(ruta, tipo) {
     }
 }
 
-// Encontrar el camino real entre dos nodos (BFS)
+/**
+ * ============================================
+ * FUNCIÓN: encontrarCamino()
+ * ============================================
+ * 
+ * Encuentra el camino real (secuencia de nodos) entre dos nodos del grafo.
+ * 
+ * Usa BFS (Breadth-First Search) para encontrar el camino más corto cuando
+ * no hay conexión directa entre los nodos.
+ * 
+ * Retorna un array con la secuencia de nodos que conectan nodo1 con nodo2.
+ * Esto es necesario para dibujar correctamente las rutas en el mapa cuando
+ * hay que pasar por nodos intermedios.
+ * 
+ * @param {string} nodo1 - Nodo de inicio
+ * @param {string} nodo2 - Nodo destino
+ * @returns {Array<string>} Array con la secuencia de nodos del camino
+ */
 function encontrarCamino(nodo1, nodo2) {
     if (nodo1 === nodo2) return [nodo1];
     
@@ -641,7 +839,20 @@ function encontrarCamino(nodo1, nodo2) {
     return [nodo1, nodo2];
 }
 
-// Mostrar recorridos realizados
+/**
+ * ============================================
+ * FUNCIÓN: mostrarRecorridos()
+ * ============================================
+ * 
+ * Genera y muestra en la interfaz todos los recorridos realizados.
+ * 
+ * Para cada recorrido muestra:
+ * - Título con número y tipo (urgente/normal)
+ * - Distancia total y tiempo estimado
+ * - Ruta completa con flechas (A → B → C → A)
+ * - Detalle de paquetes por destino
+ * - Tiempo desglosado (desplazamiento y entrega)
+ */
 function mostrarRecorridos() {
     const lista = document.getElementById('recorridosLista');
     lista.innerHTML = '';
@@ -756,7 +967,18 @@ function mostrarRecorridos() {
     });
 }
 
-// Limpiar todo
+/**
+ * ============================================
+ * FUNCIÓN: limpiarTodo()
+ * ============================================
+ * 
+ * Resetea completamente la aplicación:
+ * - Limpia todos los paquetes pendientes
+ * - Limpia todos los recorridos realizados
+ * - Limpia las rutas y números de orden del mapa
+ * - Redibuja el mapa inicial
+ * - Actualiza todas las secciones de la interfaz
+ */
 function limpiarTodo() {
     paquetes = [];
     recorridos = [];
